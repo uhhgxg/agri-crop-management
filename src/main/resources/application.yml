@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: agri-crop-management
+  jackson:
+    deserialization:
+      accept-float-as-int: false
+  datasource:
+    url: "${AGRI_DB_URL:jdbc:h2:file:./data/agri}"
+    username: sa
+    password: ""
+  sql:
+    init:
+      mode: always
+      encoding: UTF-8
+
+server:
+  port: "${SERVER_PORT:8080}"
+
+logging:
+  file:
+    name: logs/agri.log

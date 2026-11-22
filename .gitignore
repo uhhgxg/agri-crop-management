@@ -1,0 +1,10 @@
+/target/
+/data/
+/logs/
+/.postman/
+.idea/
+.classpath
+.project
+.settings/
+.env
+*.iml

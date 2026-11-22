@@ -1,0 +1,396 @@
+{
+  "info": {
+    "name": "农作物品种信息管理实训",
+    "description": "按顺序运行。前两项创建测试品种并记录 ID，末尾逻辑删除测试记录。",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:8080"
+    },
+    {
+      "key": "cropId",
+      "value": ""
+    },
+    {
+      "key": "tomatoId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 新增水稻品种",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const result = pm.response.json();",
+              "pm.test(\"HTTP and JSON code are 200\", () => {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(result.code).to.eql(200);",
+              "    pm.expect(result).to.have.property(\"data\");",
+              "});",
+              "pm.test(\"Created crop has timestamps and no deleted flag\", () => {",
+              "    pm.expect(result.data.id).to.be.a(\"number\");",
+              "    pm.expect(result.data.createTime).to.eql(result.data.updateTime);",
+              "    pm.expect(result.data).not.to.have.property(\"deleted\");",
+              "});",
+              "pm.collectionVariables.set(\"cropId\", result.data.id);",
+              "console.log(\"HTTP \" + pm.response.code + \" \" + JSON.stringify(result));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/crop/add",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cropName\": \"水稻\",\n  \"varietyName\": \"试验稻一号\",\n  \"cropType\": \"粮食\",\n  \"suitArea\": \"长江中下游\",\n  \"growthCycle\": 120,\n  \"yieldLevel\": 650.5,\n  \"plantStatus\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "02 新增番茄品种（分页测试数据）",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const result = pm.response.json();",
+              "pm.test(\"HTTP and JSON code are 200\", () => {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(result.code).to.eql(200);",
+              "    pm.expect(result).to.have.property(\"data\");",
+              "});",
+              "pm.collectionVariables.set(\"tomatoId\", result.data.id);",
+              "console.log(\"HTTP \" + pm.response.code + \" \" + JSON.stringify(result));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/crop/add",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cropName\": \"番茄\",\n  \"varietyName\": \"试验番茄\",\n  \"cropType\": \"蔬菜\",\n  \"suitArea\": \"华北\",\n  \"growthCycle\": 95,\n  \"yieldLevel\": 800,\n  \"plantStatus\": 0\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "03 修改品种",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const result = pm.response.json();",
+              "pm.test(\"HTTP and JSON code are 200\", () => {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(result.code).to.eql(200);",
+              "    pm.expect(result).to.have.property(\"data\");",
+              "});",
+              "pm.test(\"New cycle is 135\", () => pm.expect(result.data.growthCycle).to.eql(135));",
+              "console.log(\"HTTP \" + pm.response.code + \" \" + JSON.stringify(result));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/crop/update",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": {{cropId}},\n  \"cropName\": \"水稻\",\n  \"varietyName\": \"试验稻一号\",\n  \"cropType\": \"粮食\",\n  \"suitArea\": \"长江中下游\",\n  \"growthCycle\": 135,\n  \"yieldLevel\": 650.5,\n  \"plantStatus\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "04 按 ID 查询",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const result = pm.response.json();",
+              "pm.test(\"HTTP and JSON code are 200\", () => {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(result.code).to.eql(200);",
+              "    pm.expect(result).to.have.property(\"data\");",
+              "});",
+              "pm.test(\"Requested crop is returned\", () => pm.expect(result.data.id).to.eql(Number(pm.collectionVariables.get(\"cropId\"))));",
+              "console.log(\"HTTP \" + pm.response.code + \" \" + JSON.stringify(result));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/crop/{{cropId}}"
+      },
+      "response": []
+    },
+    {
+      "name": "05 分页（第 2 页，每页 1 条）",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const result = pm.response.json();",
+              "pm.test(\"HTTP and JSON code are 200\", () => {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(result.code).to.eql(200);",
+              "    pm.expect(result).to.have.property(\"data\");",
+              "});",
+              "pm.test(\"Second page contains one record\", () => {",
+              "    pm.expect(result.data.pageNum).to.eql(2);",
+              "    pm.expect(result.data.pages).to.be.at.least(2);",
+              "    pm.expect(result.data.records).to.have.lengthOf(1);",
+              "});",
+              "console.log(\"HTTP \" + pm.response.code + \" \" + JSON.stringify(result));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/crop/list?pageNum=2&pageSize=1"
+      },
+      "response": []
+    },
+    {
+      "name": "06 四项条件组合筛选",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const result = pm.response.json();",
+              "pm.test(\"HTTP and JSON code are 200\", () => {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(result.code).to.eql(200);",
+              "    pm.expect(result).to.have.property(\"data\");",
+              "});",
+              "pm.test(\"Combined filters return the created rice variety\", () => {",
+              "    const ids = result.data.records.map(record => record.id);",
+              "    pm.expect(ids).to.include(Number(pm.collectionVariables.get(\"cropId\")));",
+              "    pm.expect(ids).not.to.include(Number(pm.collectionVariables.get(\"tomatoId\")));",
+              "});",
+              "console.log(\"HTTP \" + pm.response.code + \" \" + JSON.stringify(result));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/crop/list?cropName=%E7%A8%BB&varietyName=%E7%A8%BB%E4%B8%80&cropType=%E7%B2%AE%E9%A3%9F&plantStatus=1"
+      },
+      "response": []
+    },
+    {
+      "name": "07 不传分页与筛选参数",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const result = pm.response.json();",
+              "pm.test(\"HTTP and JSON code are 200\", () => {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(result.code).to.eql(200);",
+              "    pm.expect(result).to.have.property(\"data\");",
+              "});",
+              "pm.test(\"Default pagination returns both newly added varieties\", () => {",
+              "    pm.expect(result.data.pageNum).to.eql(1);",
+              "    pm.expect(result.data.pageSize).to.eql(10);",
+              "    const ids = result.data.records.map(record => record.id);",
+              "    pm.expect(ids).to.include(Number(pm.collectionVariables.get(\"cropId\")));",
+              "    pm.expect(ids).to.include(Number(pm.collectionVariables.get(\"tomatoId\")));",
+              "});",
+              "console.log(\"HTTP \" + pm.response.code + \" \" + JSON.stringify(result));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/crop/list"
+      },
+      "response": []
+    },
+    {
+      "name": "08 生长周期校验失败",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const result = pm.response.json();",
+              "pm.test(\"HTTP and JSON code are 400\", () => {",
+              "    pm.response.to.have.status(400);",
+              "    pm.expect(result.code).to.eql(400);",
+              "    pm.expect(result).to.have.property(\"data\");",
+              "});",
+              "pm.test(\"Error data is null\", () => pm.expect(result.data).to.eql(null));",
+              "pm.test(\"Readable validation message\", () => pm.expect(result.msg).to.eql(\"生长周期不能小于1天\"));",
+              "console.log(\"HTTP \" + pm.response.code + \" \" + JSON.stringify(result));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/crop/add",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cropName\": \"水稻\",\n  \"varietyName\": \"试验稻一号\",\n  \"cropType\": \"粮食\",\n  \"suitArea\": \"长江中下游\",\n  \"growthCycle\": 0,\n  \"yieldLevel\": 650.5,\n  \"plantStatus\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "09 逻辑删除水稻品种",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const result = pm.response.json();",
+              "pm.test(\"HTTP and JSON code are 200\", () => {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(result.code).to.eql(200);",
+              "    pm.expect(result).to.have.property(\"data\");",
+              "});",
+              "pm.test(\"Deletion has no payload\", () => pm.expect(result.data).to.eql(null));",
+              "console.log(\"HTTP \" + pm.response.code + \" \" + JSON.stringify(result));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/crop/{{cropId}}"
+      },
+      "response": []
+    },
+    {
+      "name": "10 删除后查询（业务异常）",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const result = pm.response.json();",
+              "pm.test(\"HTTP and JSON code are 404\", () => {",
+              "    pm.response.to.have.status(404);",
+              "    pm.expect(result.code).to.eql(404);",
+              "    pm.expect(result).to.have.property(\"data\");",
+              "});",
+              "pm.test(\"Error data is null\", () => pm.expect(result.data).to.eql(null));",
+              "pm.test(\"Readable not-found message\", () => pm.expect(result.msg).to.include(\"未找到该农作物品种\"));",
+              "console.log(\"HTTP \" + pm.response.code + \" \" + JSON.stringify(result));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/crop/{{cropId}}"
+      },
+      "response": []
+    },
+    {
+      "name": "11 清理番茄样例",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const result = pm.response.json();",
+              "pm.test(\"HTTP and JSON code are 200\", () => {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(result.code).to.eql(200);",
+              "    pm.expect(result).to.have.property(\"data\");",
+              "});",
+              "console.log(\"HTTP \" + pm.response.code + \" \" + JSON.stringify(result));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/crop/{{tomatoId}}"
+      },
+      "response": []
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+[INFO] Running com.xxx.agri.CropApiTest
+2026-11-22T23:32:40.889+08:00  INFO 43832 --- [agri-crop-management] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 33925 (http) with context path '/'
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.676 s -- in com.xxx.agri.CropApiTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS
+[INFO] Finished at: 2026-11-22T23:32:45+08:00

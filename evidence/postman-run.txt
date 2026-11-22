@@ -1,0 +1,164 @@
+Running your collection...
+Generating run output...
+postman
+
+农作物品种信息管理实训
+
+Root 01 新增水稻品种
+
+  POST http://127.0.0.1:18085/crop/add [200 OK, 445 B, 198 ms]
+  Pass  HTTP and JSON code are 200
+  Pass  Created crop has timestamps and no deleted flag
+  -
+  | 'HTTP 200 {"code":200,"msg":"操作成功","data":{"id":1,"cro
+  | pName":"水稻","varietyName":"试验稻一号","cropType":"粮食","sui
+  | tArea":"长江中下游","growthCycle":120,"yieldLevel":650.5,"p
+  | lantStatus":1,"createTime":"2026-11-22T23:34:07.961719
+  | ","updateTime":"2026-11-22T23:34:07.961719"}}'
+  -
+
+Root 02 新增番茄品种（分页测试数据）
+
+  POST http://127.0.0.1:18085/crop/add [200 OK, 432 B, 26 ms]
+  Pass  HTTP and JSON code are 200
+  -
+  | 'HTTP 200 {"code":200,"msg":"操作成功","data":{"id":2,"cro
+  | pName":"番茄","varietyName":"试验番茄","cropType":"蔬菜","suit
+  | Area":"华北","growthCycle":95,"yieldLevel":800,"plantSta
+  | tus":0,"createTime":"2026-11-22T23:34:08.148701","upda
+  | teTime":"2026-11-22T23:34:08.148701"}}'
+  -
+
+Root 03 修改品种
+
+  PUT http://127.0.0.1:18085/crop/update [200 OK, 445 B, 27 ms]
+  Pass  HTTP and JSON code are 200
+  Pass  New cycle is 135
+  -
+  | 'HTTP 200 {"code":200,"msg":"操作成功","data":{"id":1,"cro
+  | pName":"水稻","varietyName":"试验稻一号","cropType":"粮食","sui
+  | tArea":"长江中下游","growthCycle":135,"yieldLevel":650.5,"p
+  | lantStatus":1,"createTime":"2026-11-22T23:34:07.961719
+  | ","updateTime":"2026-11-22T23:34:08.256599"}}'
+  -
+
+Root 04 按 ID 查询
+
+  GET http://127.0.0.1:18085/crop/1 [200 OK, 445 B, 16 ms]
+  Pass  HTTP and JSON code are 200
+  Pass  Requested crop is returned
+  -
+  | 'HTTP 200 {"code":200,"msg":"操作成功","data":{"id":1,"cro
+  | pName":"水稻","varietyName":"试验稻一号","cropType":"粮食","sui
+  | tArea":"长江中下游","growthCycle":135,"yieldLevel":650.5,"p
+  | lantStatus":1,"createTime":"2026-11-22T23:34:07.961719
+  | ","updateTime":"2026-11-22T23:34:08.256599"}}'
+  -
+
+Root 05 分页（第 2 页，每页 1 条）
+
+  GET http://127.0.0.1:18085/crop/list?pageNum=2&pageSize=1 [200 OK, 504 B, 23 ms]
+  Pass  HTTP and JSON code are 200
+  Pass  Second page contains one record
+  -
+  | 'HTTP 200 {"code":200,"msg":"操作成功","data":{"total":2,"
+  | pages":2,"pageNum":2,"pageSize":1,"records":[{"id":1,"
+  | cropName":"水稻","varietyName":"试验稻一号","cropType":"粮食","
+  | suitArea":"长江中下游","growthCycle":135,"yieldLevel":650.5
+  | ,"plantStatus":1,"createTime":"2026-11-22T23:34:07.961
+  | 719","updateTime":"2026-11-22T23:34:08.256599"}]}}'
+  -
+
+Root 06 四项条件组合筛选
+
+  GET http://127.0.0.1:18085/crop/list?cropName=%E7%A8%BB&varietyName=%E7%A8%BB%E4%B8%80&cropType=%E7%B2%AE%E9%A3%9F&plantStatus=1 [200 OK, 505 B, 38 ms]
+  Pass  HTTP and JSON code are 200
+  Pass  Combined filters return the created rice variety
+  -
+  | 'HTTP 200 {"code":200,"msg":"操作成功","data":{"total":1,"
+  | pages":1,"pageNum":1,"pageSize":10,"records":[{"id":1,
+  | "cropName":"水稻","varietyName":"试验稻一号","cropType":"粮食",
+  | "suitArea":"长江中下游","growthCycle":135,"yieldLevel":650.
+  | 5,"plantStatus":1,"createTime":"2026-11-22T23:34:07.96
+  | 1719","updateTime":"2026-11-22T23:34:08.256599"}]}}'
+  -
+
+Root 07 不传分页与筛选参数
+
+  GET http://127.0.0.1:18085/crop/list [200 OK, 740 B, 23 ms]
+  Pass  HTTP and JSON code are 200
+  Pass  Default pagination returns both newly added varieties
+  -
+  | 'HTTP 200 {"code":200,"msg":"操作成功","data":{"total":2,"
+  | pages":1,"pageNum":1,"pageSize":10,"records":[{"id":2,
+  | "cropName":"番茄","varietyName":"试验番茄","cropType":"蔬菜","
+  | suitArea":"华北","growthCycle":95,"yieldLevel":800,"plan
+  | tStatus":0,"createTime":"2026-11-22T23:34:08.148701","
+  | updateTime":"2026-11-22T23:34:08.148701"},{"id":1,"cro
+  | pName":"水稻","varietyName":"试验稻一号","cropType":"粮食","sui
+  | tArea":"长江中下游","growthCycle":135,"yieldLevel":650.5,"p
+  | lantStatus":1,"createTime":"2026-11-22T23:34:07.961719
+  | ","updateTime":"2026-11-22T23:34:08.256599"}]}}'
+  -
+
+Root 08 生长周期校验失败
+
+  POST http://127.0.0.1:18085/crop/add [400 Bad Request, 205 B, 21 ms]
+  Pass  HTTP and JSON code are 400
+  Pass  Error data is null
+  Pass  Readable validation message
+  -
+  | 'HTTP 400 {"code":400,"msg":"生长周期不能小于1天","data":null}'
+  -
+
+Root 09 逻辑删除水稻品种
+
+  DELETE http://127.0.0.1:18085/crop/1 [200 OK, 201 B, 22 ms]
+  Pass  HTTP and JSON code are 200
+  Pass  Deletion has no payload
+  -
+  | 'HTTP 200 {"code":200,"msg":"操作成功","data":null}'
+  -
+
+Root 10 删除后查询（业务异常）
+
+  GET http://127.0.0.1:18085/crop/1 [404 Not Found, 238 B, 10 ms]
+  Pass  HTTP and JSON code are 404
+  Pass  Error data is null
+  Pass  Readable not-found message
+  -
+  | 'HTTP 404 {"code":404,"msg":"未找到该农作物品种，id=1","data":nu
+  | ll}'
+  -
+
+Root 11 清理番茄样例
+
+  DELETE http://127.0.0.1:18085/crop/2 [200 OK, 201 B, 14 ms]
+  Pass  HTTP and JSON code are 200
+  -
+  | 'HTTP 200 {"code":200,"msg":"操作成功","data":null}'
+  -
+
+-----------------------------------------------------------------------
+|                         |            executed |              failed |
+--------------------------+---------------------+----------------------
+|              iterations |                   1 |                   0 |
+--------------------------+---------------------+----------------------
+|                requests |                  11 |                   0 |
+--------------------------+---------------------+----------------------
+|            test-scripts |                  11 |                   0 |
+--------------------------+---------------------+----------------------
+|      prerequest-scripts |                   0 |                   0 |
+--------------------------+---------------------+----------------------
+|              assertions |                  22 |                   0 |
+-----------------------------------------------------------------------
+| total run duration: 1392 ms                                         |
+-----------------------------------------------------------------------
+| total data received: 2.57 KB (approx)                               |
+-----------------------------------------------------------------------
+| average response time: 38 ms [min: 10 ms, max: 198 ms, s.d.: 51 ms] |
+-----------------------------------------------------------------------
+
+√ Output generated
+    └ run-2026-11-22-23-34-07.collection-run-summary.yaml
+    └ run-2026-11-22-23-34-07.collection-run-executions.yaml
